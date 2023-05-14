@@ -1,5 +1,6 @@
 package ca.awoo.lillil.sexpression;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,6 +18,10 @@ public class SList extends SExpression {
         this.value = Arrays.asList(args);
     }
 
+    public SList(){
+        this.value = new ArrayList<SExpression>();
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("(");
@@ -24,6 +29,8 @@ public class SList extends SExpression {
             sb.append(sexpr.toString());
             sb.append(" ");
         }
+        if(value.size() > 0)
+            sb.deleteCharAt(sb.length() - 1);
         sb.append(")");
         return sb.toString();
     }

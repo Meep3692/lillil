@@ -7,6 +7,7 @@ import java.util.Map;
 
 import ca.awoo.lillil.sexpression.SExpression;
 import ca.awoo.lillil.sexpression.SFunction;
+import ca.awoo.lillil.sexpression.SMacro;
 import ca.awoo.lillil.sexpression.SSymbol;
 
 public class Environment {
@@ -45,24 +46,28 @@ public class Environment {
                 first = evaluate(first);
             }
             if(first.isSymbol()){
-                List<SExpression> list = new ArrayList<SExpression>(sexpr.size());
-                for(SExpression subsexpr : sexpr.subList(1, sexpr.size())) {
-                    list.add(evaluate(subsexpr));
-                }
+                
                 SSymbol symbol = first.asSymbol();
                 SExpression value = getBinding(symbol.value);
                 if(value == null){
-                    throw new LillilRuntimeException(symbol.position, symbol.line, symbol.column, symbol, "Attempted to call an undefined function");
+                    throw new LillilRuntimeException(symbol.position, symbol.line, symbol.column, symbol, "Attempted to call an undefined symbol");
                 }
                 if(value instanceof SFunction){
                     SFunction function = (SFunction)value;
+                    List<SExpression> list = new ArrayList<SExpression>(sexpr.size());
+                    for(SExpression subsexpr : sexpr.subList(1, sexpr.size())) {
+                        list.add(evaluate(subsexpr));
+                    }
                     return function.apply(list.toArray(new SExpression[0]));
+                }else if(value instanceof SMacro){
+                    SMacro macro = (SMacro)value;
+                    return macro.apply(sexpr.subList(1, sexpr.size()).toArray(new SExpression[0]));
                 }else{
-                    throw new LillilRuntimeException(symbol.position, symbol.line, symbol.column, value, "Attempted to call a non-function");
+                    throw new LillilRuntimeException(symbol.position, symbol.line, symbol.column, value, "Attempted to call a non-executable type");
                 }
             }else{
                 //The first element of the list is not a symbol, but is atomic
-                throw new LillilRuntimeException(first.position, first.line, first.column, first, "Attempted to call a non-function");
+                throw new LillilRuntimeException(first.position, first.line, first.column, first, "Attempted to call a literal");
             }
         } else {
             throw new LillilRuntimeException(sexpr.position, sexpr.line, sexpr.column, sexpr, "Attempted to evaluate a non-atomic, non-list expression, which by all means shouldn't exist");
