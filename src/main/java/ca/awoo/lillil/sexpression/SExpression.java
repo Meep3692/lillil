@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 public abstract class SExpression implements List<SExpression>{
-    
+
+    public int position;
+    public int line;
+    public int column;
+
     public SBoolean asBoolean() {
         return (SBoolean)this;
     }

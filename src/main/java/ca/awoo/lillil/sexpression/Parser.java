@@ -43,19 +43,29 @@ public class Parser {
         if(!hasNext())
             return null;
         Token next = lookahead();
+        SExpression result;
         switch(next.getType()){
             case OPEN_PAREN:
-                return parseList();
+                result = parseList();
+                break;
             case STRING:
-                return parseString();
+                result = parseString();
+                break;
             case SYMBOL:
-                return parseSymbol();
+                result = parseSymbol();
+                break;
             case INTEGER:
-                return parseInteger();
+                result = parseInteger();
+                break;
             case FLOAT:
-                return parseFloat();
+                result = parseFloat();
+                break;
             case BOOLEAN:
-                return parseBoolean();
+                result = parseBoolean();
+                break;
+            case APOSTROPHE:
+                result = parseQuote();
+                break;
             case WHITESPACE:
                 //Ignore whitespace
                 //Read next to remove it from the list
@@ -64,6 +74,18 @@ public class Parser {
             default:
                 throw new ParserException(next.start, next.line, next.column, next);
         }
+        result.position = next.start;
+        result.line = next.line;
+        result.column = next.column;
+        return result;
+    }
+
+    private SExpression parseQuote() throws ParserException, TokenizerException {
+        Token next = next();
+        if(!(next.getType() == Tokenizer.TokenType.APOSTROPHE))
+            throw new ParserException(next.start, next.line, next.column, next, "Expected apostrophe");
+        SExpression quoted = parseExpression();
+        return new SList(new SSymbol("quote"), quoted);
     }
 
     private SExpression parseBoolean() throws TokenizerException, ParserException {

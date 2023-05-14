@@ -20,6 +20,7 @@ public class Tokenizer {
         FLOAT,
         BOOLEAN,
         WHITESPACE,
+        APOSTROPHE,
     }
 
     class Token {
@@ -68,11 +69,12 @@ public class Tokenizer {
         new TokenReader(TokenType.OPEN_PAREN, "\\("),
         new TokenReader(TokenType.CLOSE_PAREN, "\\)"),
         new TokenReader(TokenType.STRING, "\"(?:[^\"\\\\]|\\\\\"|\\\\)*\""),
-        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d][^\\s\\(\\)\"]*"),
+        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d'][^\\s\\(\\)\"]*"),
         new TokenReader(TokenType.INTEGER, "-?\\d+"),
         new TokenReader(TokenType.FLOAT, "-?\\d*\\.\\d+"),
         new TokenReader(TokenType.BOOLEAN, "#[tf]"),
-        new TokenReader(TokenType.WHITESPACE, "\\s+")
+        new TokenReader(TokenType.WHITESPACE, "\\s+"),
+        new TokenReader(TokenType.APOSTROPHE, "'")
     );
 
     public Tokenizer(String input) {
