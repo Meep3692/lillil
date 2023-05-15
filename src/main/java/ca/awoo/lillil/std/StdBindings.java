@@ -13,5 +13,6 @@ public class StdBindings {
         put("*", new MulFunction());
         put("/", new DivFunction());
         put("quote", new QuoteMacro());
+        put("lambda", new LambdaMacro());
     }};
 }

@@ -39,6 +39,7 @@ public class EvaluatorTest {
         assertEquals("3", result.toString());
     }
 
+    @Test
     public void externalMacroTest() throws TokenizerException, ParserException, LillilRuntimeException {
         Parser parser = new Parser("'(1 2)");
         List<SExpression> expressions = parser.getExpressions();
@@ -46,7 +47,7 @@ public class EvaluatorTest {
         assertEquals(1, expressions.size());
         Environment env = new Environment();
         env.setBinding("quote", new SMacro(){
-            public SExpression apply(SExpression ... args) throws LillilRuntimeException{
+            public SExpression apply(Environment env, SExpression ... args) throws LillilRuntimeException{
                 if(args.length < 1){
                     return new SList();
                 }

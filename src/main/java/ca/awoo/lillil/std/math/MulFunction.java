@@ -6,7 +6,7 @@ import ca.awoo.lillil.sexpression.SFloat;
 import ca.awoo.lillil.sexpression.SFunction;
 import ca.awoo.lillil.sexpression.SInteger;
 
-public class  MultiplyFunction extends SFunction {
+public class  MulFunction extends SFunction {
 
     @Override
     public SExpression apply(SExpression... args) throws LillilRuntimeException {
