@@ -1,4 +1,4 @@
-package ca.awoo.lillil.std.math;
+package ca.awoo.lillil.core.math;
 
 import java.util.Arrays;
 

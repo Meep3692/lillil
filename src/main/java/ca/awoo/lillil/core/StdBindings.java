@@ -1,10 +1,10 @@
-package ca.awoo.lillil.std;
+package ca.awoo.lillil.core;
 
 import java.util.Map;
 
+import ca.awoo.lillil.core.lang.*;
+import ca.awoo.lillil.core.math.*;
 import ca.awoo.lillil.sexpression.SExpression;
-import ca.awoo.lillil.std.lang.*;
-import ca.awoo.lillil.std.math.*;
 
 public class StdBindings {
     public static Map<String, SExpression> bindings = new java.util.HashMap<String, SExpression>(){{

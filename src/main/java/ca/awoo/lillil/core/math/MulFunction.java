@@ -1,4 +1,4 @@
-package ca.awoo.lillil.std.math;
+package ca.awoo.lillil.core.math;
 
 import ca.awoo.lillil.LillilRuntimeException;
 import ca.awoo.lillil.sexpression.SExpression;

@@ -6,11 +6,11 @@ import java.util.List;
 
 import org.junit.Test;
 
+import ca.awoo.lillil.core.StdBindings;
 import ca.awoo.lillil.sexpression.Parser;
 import ca.awoo.lillil.sexpression.ParserException;
 import ca.awoo.lillil.sexpression.SExpression;
 import ca.awoo.lillil.sexpression.TokenizerException;
-import ca.awoo.lillil.std.StdBindings;
 
 public class StdTest {
     @Test

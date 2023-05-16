@@ -1,4 +1,4 @@
-package ca.awoo.lillil.std.lang;
+package ca.awoo.lillil.core.lang;
 
 import ca.awoo.lillil.Environment;
 import ca.awoo.lillil.LillilRuntimeException;

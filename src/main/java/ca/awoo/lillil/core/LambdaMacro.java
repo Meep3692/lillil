@@ -1,4 +1,4 @@
-package ca.awoo.lillil.std;
+package ca.awoo.lillil.core;
 
 import ca.awoo.lillil.Environment;
 import ca.awoo.lillil.LillilRuntimeException;
@@ -9,7 +9,7 @@ import ca.awoo.lillil.sexpression.SSymbol;
 
 public class LambdaMacro extends ca.awoo.lillil.sexpression.SMacro {
 
-    Environment parentlEnvironment;
+    Environment parentEnvironment;
     SList arguments;
     SList body;
 
@@ -31,14 +31,14 @@ public class LambdaMacro extends ca.awoo.lillil.sexpression.SMacro {
             throw new LillilRuntimeException(args[1], "Invalid type for argument list");
         }
         this.body = args[1].asList();
-        this.parentlEnvironment = env;
+        this.parentEnvironment = env;
         return lambda;
     }
 
     private SFunction lambda = new SFunction() {
         @Override
         public SExpression apply(SExpression... args) throws LillilRuntimeException {
-            Environment env = new Environment(parentlEnvironment);
+            Environment env = new Environment(parentEnvironment);
             for(int i = 0; i < arguments.size(); i++){
                 SSymbol arg = arguments.get(i).asSymbol();
                 if(arg.value == "."){
