@@ -14,4 +14,8 @@ public abstract class SFunction extends SExpression {
     public boolean isList(){
         return false;
     }
+
+    public int hashCode() {
+        return this.getClass().hashCode();
+    }
 }

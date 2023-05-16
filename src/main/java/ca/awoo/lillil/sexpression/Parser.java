@@ -66,6 +66,9 @@ public class Parser {
             case APOSTROPHE:
                 result = parseQuote();
                 break;
+            case TILDE:
+                result = parseUnquote();
+                break;
             case WHITESPACE:
                 //Ignore whitespace
                 //Read next to remove it from the list
@@ -86,6 +89,14 @@ public class Parser {
             throw new ParserException(next.start, next.line, next.column, next, "Expected apostrophe");
         SExpression quoted = parseExpression();
         return new SList(new SSymbol("quote"), quoted);
+    }
+
+    private SExpression parseUnquote() throws ParserException, TokenizerException {
+        Token next = next();
+        if(!(next.getType() == Tokenizer.TokenType.TILDE))
+            throw new ParserException(next.start, next.line, next.column, next, "Expected tilde");
+        SExpression quoted = parseExpression();
+        return new SList(new SSymbol("eval"), quoted);
     }
 
     private SExpression parseBoolean() throws TokenizerException, ParserException {

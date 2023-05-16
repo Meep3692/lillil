@@ -6,7 +6,7 @@ import ca.awoo.lillil.core.lang.*;
 import ca.awoo.lillil.core.math.*;
 import ca.awoo.lillil.sexpression.SExpression;
 
-public class StdBindings {
+public class CoreBindings {
     public static Map<String, SExpression> bindings = new java.util.HashMap<String, SExpression>(){{
         put("+", new AddFunction());
         put("-", new SubFunction());
@@ -14,5 +14,9 @@ public class StdBindings {
         put("/", new DivFunction());
         put("quote", new QuoteMacro());
         put("lambda", new LambdaMacro());
+        put("macro", new MacroMacro());
+        put("eval", new EvalMacro());
+        put("if", new IfMacro());
+        put("define", new DefineMacro());
     }};
 }

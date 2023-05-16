@@ -18,4 +18,8 @@ public class SFloat extends SExpression{
         }
         return false;
     }
+
+    public int hashCode() {
+        return Float.hashCode(value);
+    }
 }

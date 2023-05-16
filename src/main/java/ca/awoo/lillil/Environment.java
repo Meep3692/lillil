@@ -81,5 +81,9 @@ public class Environment {
             throw new LillilRuntimeException(sexpr.position, sexpr.line, sexpr.column, sexpr, "Attempted to evaluate a non-atomic, non-list expression, which by all means shouldn't exist");
         }
     }
+
+    public int hashCode(){
+        return bindings.hashCode() + (parent == null ? 0 : parent.hashCode());
+    }
     
 }

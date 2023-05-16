@@ -20,4 +20,8 @@ public class SString extends SExpression{
         }
         return false;
     }
+
+    public int hashCode() {
+        return value.hashCode();
+    }
 }

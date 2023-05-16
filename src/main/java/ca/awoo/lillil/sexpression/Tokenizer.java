@@ -21,6 +21,7 @@ public class Tokenizer {
         BOOLEAN,
         WHITESPACE,
         APOSTROPHE,
+        TILDE,
     }
 
     class Token {
@@ -69,12 +70,13 @@ public class Tokenizer {
         new TokenReader(TokenType.OPEN_PAREN, "\\("),
         new TokenReader(TokenType.CLOSE_PAREN, "\\)"),
         new TokenReader(TokenType.STRING, "\"(?:[^\"\\\\]|\\\\\"|\\\\)*\""),
-        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d'][^\\s\\(\\)\"]*"),
+        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d'~][^\\s\\(\\)\"]*"),
         new TokenReader(TokenType.INTEGER, "-?\\d+"),
         new TokenReader(TokenType.FLOAT, "-?\\d*\\.\\d+"),
         new TokenReader(TokenType.BOOLEAN, "#[tf]"),
         new TokenReader(TokenType.WHITESPACE, "\\s+"),
-        new TokenReader(TokenType.APOSTROPHE, "'")
+        new TokenReader(TokenType.APOSTROPHE, "'"),
+        new TokenReader(TokenType.TILDE, "~")
     );
 
     public Tokenizer(String input) {

@@ -2,6 +2,7 @@ package ca.awoo.lillil;
 
 import org.junit.Test;
 
+import ca.awoo.lillil.core.CoreBindings;
 import ca.awoo.lillil.sexpression.Parser;
 import ca.awoo.lillil.sexpression.ParserException;
 import ca.awoo.lillil.sexpression.SExpression;

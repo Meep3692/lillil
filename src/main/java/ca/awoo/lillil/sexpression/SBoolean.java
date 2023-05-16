@@ -16,4 +16,8 @@ public class SBoolean extends SExpression {
         }
         return false;
     }
+
+    public int hashCode() {
+        return value ? 1 : 0;
+    }
 }

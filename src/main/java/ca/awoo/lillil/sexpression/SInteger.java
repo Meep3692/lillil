@@ -16,4 +16,8 @@ public class SInteger extends SExpression {
         }
         return false;
     }
+
+    public int hashCode() {
+        return Integer.hashCode(value);
+    }
 }

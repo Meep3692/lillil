@@ -16,4 +16,8 @@ public class SSymbol extends SExpression {
         }
         return false;
     }
+
+    public int hashCode() {
+        return value.hashCode();
+    }
 }
