@@ -66,14 +66,14 @@ public class Environment {
             }
             if(first instanceof SFunction){
                 SFunction function = (SFunction)first;
-                List<SExpression> list = new ArrayList<SExpression>(sexpr.size());
-                for(SExpression subsexpr : sexpr.subList(1, sexpr.size())) {
+                List<SExpression> list = new ArrayList<SExpression>(sexpr.asList().size());
+                for(SExpression subsexpr : sexpr.asList().subList(1, sexpr.asList().size())) {
                     list.add(evaluate(subsexpr));
                 }
                 return function.apply(list.toArray(new SExpression[0]));
             }else if(first instanceof SMacro){
                 SMacro macro = (SMacro)first;
-                return macro.apply(this, sexpr.subList(1, sexpr.size()).toArray(new SExpression[0]));
+                return macro.apply(this, sexpr.asList().subList(1, sexpr.asList().size()).toArray(new SExpression[0]));
             }else{
                 throw new LillilRuntimeException(first.position, first.line, first.column, first, "Attempted to call a non-executable type");
             }

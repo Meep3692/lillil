@@ -18,5 +18,6 @@ public class CoreBindings {
         put("eval", new EvalMacro());
         put("if", new IfMacro());
         put("define", new DefineMacro());
+        put("parse", new ParseFunction());
     }};
 }

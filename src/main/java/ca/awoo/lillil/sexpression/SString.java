@@ -1,7 +1,6 @@
 package ca.awoo.lillil.sexpression;
 
-public class SString extends SExpression{
-    public String value;
+public class SString extends SPrimitive<String>{
     public SString(String value) {
         this.value = value;
     }
@@ -14,14 +13,4 @@ public class SString extends SExpression{
                     .replace( "\r", "\\r") + "\"";
     }
 
-    public boolean equals(Object o) {
-        if (o instanceof SString) {
-            return value.equals(((SString)o).value);
-        }
-        return false;
-    }
-
-    public int hashCode() {
-        return value.hashCode();
-    }
 }

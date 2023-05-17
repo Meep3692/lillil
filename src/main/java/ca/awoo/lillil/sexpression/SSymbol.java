@@ -1,23 +1,7 @@
 package ca.awoo.lillil.sexpression;
 
-public class SSymbol extends SExpression {
-    public String value;
+public class SSymbol extends SPrimitive<String> {
     public SSymbol(String value) {
         this.value = value;
-    }
-
-    public String toString() {
-        return value;
-    }
-
-    public boolean equals(Object o) {
-        if (o instanceof SSymbol) {
-            return value.equals(((SSymbol)o).value);
-        }
-        return false;
-    }
-
-    public int hashCode() {
-        return value.hashCode();
     }
 }

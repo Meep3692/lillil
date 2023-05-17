@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class SList extends SExpression {
+public class SList extends SExpression implements List<SExpression> {
     public List<SExpression> value;
 
     public SList(List<SExpression> value) {

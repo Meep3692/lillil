@@ -34,6 +34,6 @@ public class CoreTest {
         env.evaluate(expressions.get(1));
         SExpression result = env.evaluate(expressions.get(2));
         System.out.println("Test result = 3");
-        assertEquals(3, result.asInteger().value);
+        assertEquals("3", result.asInteger().toString());
     }
 }

@@ -39,7 +39,7 @@ public class Parser {
         return expressions;
     }
 
-    private SExpression parseExpression() throws TokenizerException, ParserException {
+    private SExpression parseExpression() throws ParserException {
         if(!hasNext())
             return null;
         Token next = lookahead();
@@ -57,8 +57,14 @@ public class Parser {
             case INTEGER:
                 result = parseInteger();
                 break;
+            case LONG:
+                result = parseLong();
+                break;
             case FLOAT:
                 result = parseFloat();
+                break;
+            case DOUBLE:
+                result = parseDouble();
                 break;
             case BOOLEAN:
                 result = parseBoolean();
@@ -83,7 +89,7 @@ public class Parser {
         return result;
     }
 
-    private SExpression parseQuote() throws ParserException, TokenizerException {
+    private SExpression parseQuote() throws ParserException {
         Token next = next();
         if(!(next.getType() == Tokenizer.TokenType.APOSTROPHE))
             throw new ParserException(next.start, next.line, next.column, next, "Expected apostrophe");
@@ -91,7 +97,7 @@ public class Parser {
         return new SList(new SSymbol("quote"), quoted);
     }
 
-    private SExpression parseUnquote() throws ParserException, TokenizerException {
+    private SExpression parseUnquote() throws ParserException {
         Token next = next();
         if(!(next.getType() == Tokenizer.TokenType.TILDE))
             throw new ParserException(next.start, next.line, next.column, next, "Expected tilde");
@@ -99,40 +105,58 @@ public class Parser {
         return new SList(new SSymbol("eval"), quoted);
     }
 
-    private SExpression parseBoolean() throws TokenizerException, ParserException {
+    private SExpression parseBoolean() throws ParserException {
         Token next = next();
         if(next.getValue().equals("#t"))
-            return new SBoolean(true);
+            return new SBoolean(Boolean.TRUE);
         else if(next.getValue().equals("#f"))
-            return new SBoolean(false);
+            return new SBoolean(Boolean.FALSE);
         else
             throw new ParserException(next.start, next.line, next.column, next, "Unexpected boolean value");
     }
 
-    private SExpression parseFloat() throws TokenizerException, ParserException {
+    private SExpression parseFloat() throws ParserException {
         Token next = next();
         try{
             return new SFloat(Float.parseFloat(next.getValue()));
         } catch(NumberFormatException e){
-            throw new ParserException(next.start, next.line, next.column, next, "Unexpected float value");
+            throw new ParserException(next.start, next.line, next.column, next, "Unable to parse float value");
         }
     }
 
-    private SExpression parseInteger() throws TokenizerException, ParserException {
+    private SExpression parseDouble() throws ParserException {
+        Token next = next();
+        try{
+            return new SDouble(Double.parseDouble(next.getValue()));
+        } catch(NumberFormatException e){
+            throw new ParserException(next.start, next.line, next.column, next, "Unable to parse double value");
+        }
+    }
+
+    private SExpression parseInteger() throws ParserException {
         Token next = next();
         try{
             return new SInteger(Integer.parseInt(next.getValue()));
         } catch(NumberFormatException e){
-            throw new ParserException(next.start, next.line, next.column, next, "Unexpected integer value");
+            throw new ParserException(next.start, next.line, next.column, next, "Unable to parse integer value");
         }
     }
 
-    private SExpression parseSymbol() throws TokenizerException, ParserException {
+    private SExpression parseLong() throws ParserException {
+        Token next = next();
+        try{
+            return new SLong(Long.parseLong(next.getValue().substring(0, next.getValue().length() - 1)));
+        } catch(NumberFormatException e){
+            throw new ParserException(next.start, next.line, next.column, next, "Unable to parse long value");
+        }
+    }
+
+    private SExpression parseSymbol() throws ParserException {
         Token next = next();
         return new SSymbol(next.getValue());
     }
 
-    private SExpression parseString() throws TokenizerException, ParserException {
+    private SExpression parseString() throws ParserException {
         Token next = next();
         String value = next.getValue();
         value = value.substring(1, value.length() - 1)
@@ -144,7 +168,7 @@ public class Parser {
         return new SString(value);
     }
 
-    private SExpression parseList() throws TokenizerException, ParserException {
+    private SExpression parseList() throws ParserException {
         Token next = next();
         if(next.getType() != Tokenizer.TokenType.OPEN_PAREN)
             throw new ParserException(next.start, next.line, next.column, next, "Expected open paren");
