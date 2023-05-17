@@ -82,6 +82,14 @@ public class Environment {
         }
     }
 
+    public SExpression evalAll(List<SExpression> sexprs) throws LillilRuntimeException{
+        SExpression result = null;
+        for(SExpression sexpr : sexprs){
+            result = evaluate(sexpr);
+        }
+        return result;
+    }
+
     public int hashCode(){
         return bindings.hashCode() + (parent == null ? 0 : parent.hashCode());
     }

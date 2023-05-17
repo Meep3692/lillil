@@ -1,0 +1,9 @@
+(define defn
+        (macro (name args body) 
+               (define name 
+                       (lambda args body))))
+
+(define defmacro
+        (macro (name args body) 
+               (define name 
+                       (macro args body))))
