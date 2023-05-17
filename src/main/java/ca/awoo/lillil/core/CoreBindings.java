@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,10 +35,26 @@ public class CoreBindings {
         for(String key : bindings.keySet()){
             env.setBinding(key, bindings.get(key));
         }
-        bindFile(env, "ca/awoo/lillil/core");
+        bindFile(env, "ca/awoo/lillil/core/define.lil");
     }
 
     private static void bindFile(Environment env, String file) throws IOException, TokenizerException, ParserException, LillilRuntimeException{
+        InputStream is = CoreBindings.class.getClassLoader().getResourceAsStream(file);
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        for(String next = br.readLine(); next != null; next = br.readLine()){
+            sb.append(next);
+        }
+        String code = sb.toString();
+        Parser parser = new Parser(code);
+        List<SExpression> expressions = parser.getExpressions();
+        for(SExpression expression : expressions){
+            env.evaluate(expression);
+        }
+    }
+
+    //This was supposed to automatically walk the directory and subdirectories, but it doesn't work
+    /*private static void bindFile(Environment env, String file) throws IOException, TokenizerException, ParserException, LillilRuntimeException{
         InputStream is = CoreBindings.class.getClassLoader().getResourceAsStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         List<String> subDirs = new ArrayList<String>();
@@ -74,5 +89,5 @@ public class CoreBindings {
                 bindFile(env, file + "/" + subDir);
             }
         }
-    }
+    }*/
 }
