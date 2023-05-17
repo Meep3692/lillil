@@ -22,6 +22,7 @@ public class CoreBindings {
         put("-", new SubFunction());
         put("*", new MulFunction());
         put("/", new DivFunction());
+        put("mod", new ModFunction());
         put("quote", new QuoteMacro());
         put("lambda", new LambdaMacro());
         put("macro", new MacroMacro());

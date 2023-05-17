@@ -70,6 +70,10 @@ public abstract class SExpression{
         return this instanceof SSymbol;
     }
 
+    public boolean isNumber(){
+        return false;
+    }
+
     public boolean isAtom() {
         return !isList();
     }

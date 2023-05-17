@@ -4,4 +4,9 @@ public class SInteger extends SPrimitive<Integer> {
     public SInteger(int value) {
         this.value = value;
     }
+
+    @Override
+    public boolean isNumber() {
+        return true;
+    }
 }

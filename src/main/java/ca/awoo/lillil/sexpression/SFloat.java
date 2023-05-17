@@ -4,4 +4,9 @@ public class SFloat extends SPrimitive<Float>{
     public SFloat(float value) {
         this.value = value;
     }
+
+    @Override
+    public boolean isNumber() {
+        return true;
+    }
 }

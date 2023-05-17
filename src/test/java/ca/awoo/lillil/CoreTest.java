@@ -11,6 +11,9 @@ import ca.awoo.lillil.core.CoreBindings;
 import ca.awoo.lillil.sexpression.Parser;
 import ca.awoo.lillil.sexpression.ParserException;
 import ca.awoo.lillil.sexpression.SExpression;
+import ca.awoo.lillil.sexpression.SFunction;
+import ca.awoo.lillil.sexpression.SList;
+import ca.awoo.lillil.sexpression.SMacro;
 import ca.awoo.lillil.sexpression.TokenizerException;
 
 public class CoreTest {
@@ -47,5 +50,25 @@ public class CoreTest {
         SExpression result = env.evalAll(expressions);
         System.out.println("Test result = 3");
         assertEquals("3", result.asInteger().toString());
+    }
+
+    @Test
+    public void mathTest() throws TokenizerException, ParserException, IOException, LillilRuntimeException {
+        Parser parser = new Parser("(assert-equals 6 (+ 2 4) (* 2 3) (/ 12 2) (/ 36 3 2) (- 10 4) (- 12 4 2) (mod 16 10))");
+        List<SExpression> expressions = parser.getExpressions();
+        Environment env = new Environment();
+        CoreBindings.bindCore(env);
+        env.setBinding("assert-equals", new SMacro() {
+            @Override
+            public SExpression apply(Environment env, SExpression... args) throws LillilRuntimeException {
+                SExpression expected = env.evaluate(args[0]);
+                for(int i = 1; i < args.length; i++){
+                    System.out.println("Test: " + args[i].toString() + " = " + expected.toString());
+                    assertEquals(expected, env.evaluate(args[i]));
+                }
+                return expected;
+            }
+        });
+        assertEquals("6", env.evalAll(expressions).toString());
     }
 }
