@@ -71,4 +71,21 @@ public class CoreTest {
         });
         assertEquals("6", env.evalAll(expressions).toString());
     }
+
+    @Test
+    public void compareTest() throws TokenizerException, ParserException, LillilRuntimeException, IOException {
+        Parser parser = new Parser("(assert-true \"One does not equal one\" (= 1 1) (= 1 1 1))" + 
+                                   "(assert-true \"Failed greater than\" (> 5 4 3 2 1))" +
+                                   "(assert-true \"Failed less than!\" (< 1 2 3 4 5))" +
+                                   "(assert-true \"Failed greater than or equal to\" (>= 5 4 3 2 1) (>= 5 5))" + 
+                                   "(assert-true \"Failed less than or equal to\" (<= 1 2 3 4 5) (<= 5 5))" + 
+                                   "(assert-false \"Failed greater than\" (> 5 4 7 2 1 0))" + 
+                                   "(assert-false \"Failed less than!\" (< 1 2 3 4 5 0))" +
+                                   "(assert-false \"Failed greater than or equal to\" (>= 5 4 7 2 1 0) (>= 5 6))" +
+                                   "(assert-false \"Failed less than or equal to\" (<= 1 2 3 4 5 0) (<= 5 4))");
+        List<SExpression> expressions = parser.getExpressions();
+        Environment env = new Environment();
+        CoreBindings.bindCore(env);
+        env.evalAll(expressions);
+    }
 }

@@ -11,6 +11,8 @@ import ca.awoo.lillil.Environment;
 import ca.awoo.lillil.LillilRuntimeException;
 import ca.awoo.lillil.core.lang.*;
 import ca.awoo.lillil.core.math.*;
+import ca.awoo.lillil.core.bool.*;
+import ca.awoo.lillil.core.debug.*;
 import ca.awoo.lillil.sexpression.Parser;
 import ca.awoo.lillil.sexpression.ParserException;
 import ca.awoo.lillil.sexpression.SExpression;
@@ -18,18 +20,35 @@ import ca.awoo.lillil.sexpression.TokenizerException;
 
 public class CoreBindings {
     private static Map<String, SExpression> bindings = new java.util.HashMap<String, SExpression>(){{
+        //Math
         put("+", new AddFunction());
         put("-", new SubFunction());
         put("*", new MulFunction());
         put("/", new DivFunction());
         put("mod", new ModFunction());
+
+        //Bool
+        put("=", new EqualsFunction());
+        put(">", new GreaterFunction());
+        put("<", new LessFunction());
+        put(">=", new GreaterEqualsFunction());
+        put("<=", new LessEqualsFunction());
+        put("not", new NotFunction());
+
+        //Lang
         put("quote", new QuoteMacro());
+        put("eval", new EvalMacro());
+
         put("lambda", new LambdaMacro());
         put("macro", new MacroMacro());
-        put("eval", new EvalMacro());
-        put("if", new IfMacro());
         put("define", new DefineMacro());
         put("parse", new ParseFunction());
+        
+        put("if", new IfMacro());
+
+        put("assert-true", new AssertTrueFunction());
+        put("assert-false", new AssertFalseFunction());
+        
     }};
 
     public static void bindCore(Environment env) throws IOException, TokenizerException, ParserException, LillilRuntimeException{
