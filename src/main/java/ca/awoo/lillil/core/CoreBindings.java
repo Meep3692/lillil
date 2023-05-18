@@ -13,9 +13,12 @@ import ca.awoo.lillil.core.lang.*;
 import ca.awoo.lillil.core.math.*;
 import ca.awoo.lillil.core.bool.*;
 import ca.awoo.lillil.core.debug.*;
+import ca.awoo.lillil.core.map.*;
 import ca.awoo.lillil.sexpression.Parser;
 import ca.awoo.lillil.sexpression.ParserException;
 import ca.awoo.lillil.sexpression.SExpression;
+import ca.awoo.lillil.sexpression.SFunction;
+import ca.awoo.lillil.sexpression.SString;
 import ca.awoo.lillil.sexpression.TokenizerException;
 
 public class CoreBindings {
@@ -34,18 +37,30 @@ public class CoreBindings {
         put(">=", new GreaterEqualsFunction());
         put("<=", new LessEqualsFunction());
         put("not", new NotFunction());
+        put("and", new AndFunction());
+        put("or", new OrFunction());
+
+        //Map
+        put("keys", new KeysFunction());
+        put("values", new ValuesFunction());
+        put("key->string", new KeyToStringFunction());
+        put("key->symbol", new KeyToSymbolFunction());
+        put("new-map", new NewMapFunction());
 
         //Lang
         put("quote", new QuoteMacro());
         put("eval", new EvalMacro());
-
+        put("if", new IfMacro());
         put("lambda", new LambdaMacro());
         put("macro", new MacroMacro());
         put("define", new DefineMacro());
         put("parse", new ParseFunction());
-        
-        put("if", new IfMacro());
 
+        put("import", new ImportFunction());
+        put("use-module", new UseModuleMacro());
+        put("map", new MapFunction());
+        
+        //Debug
         put("assert-true", new AssertTrueFunction());
         put("assert-false", new AssertFalseFunction());
         
@@ -55,22 +70,50 @@ public class CoreBindings {
         for(String key : bindings.keySet()){
             env.setBinding(key, bindings.get(key));
         }
-        bindFile(env, "ca/awoo/lillil/core/define.lil");
+        //We need a way to import files without trying to load the core bindings again
+        //This means the environment these files are loaded in will only have the most basic bindings
+        env.setBinding("import-core", new SFunction() {
+            @Override
+            public SExpression apply(SExpression... args) throws LillilRuntimeException {
+                assertArity("import", 1, args.length, false);
+                SString path = assertArgType(args[0], SString.class);
+                try{
+                    String resourcepath = path.value.replace(".", "/") + ".lil";
+                    InputStream is = CoreBindings.class.getClassLoader().getResourceAsStream(resourcepath);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder sb = new StringBuilder();
+                    for(String next = br.readLine(); next != null; next = br.readLine()){
+                        sb.append(next);
+                        sb.append("\n");
+                    }
+                    String code = sb.toString();
+                    Parser parser = new Parser(code);
+                    List<SExpression> expressions = parser.getExpressions();
+                    Environment env = new Environment(null, bindings);
+                    return env.evalAll(expressions);
+                } catch(IOException | TokenizerException | ParserException e){
+                    throw new LillilRuntimeException(this, e.getMessage(), e);
+                }
+            }
+            
+        });
+        bindFile(env, "ca/awoo/lillil/core/core.lil");
+        //Remove core-import binding, we don;t want it used by user code
+        env.setBinding("import-core", null);
     }
 
     private static void bindFile(Environment env, String file) throws IOException, TokenizerException, ParserException, LillilRuntimeException{
         InputStream is = CoreBindings.class.getClassLoader().getResourceAsStream(file);
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
         for(String next = br.readLine(); next != null; next = br.readLine()){
             sb.append(next);
+            sb.append("\n");
         }
         String code = sb.toString();
         Parser parser = new Parser(code);
         List<SExpression> expressions = parser.getExpressions();
-        for(SExpression expression : expressions){
-            env.evaluate(expression);
-        }
+        env.evalAll(expressions);
     }
 
     //This was supposed to automatically walk the directory and subdirectories, but it doesn't work

@@ -1,0 +1,10 @@
+;We don't have defmacro yet because it's in ca.awoo.lillil.core.define, which isn't loaded yet.
+(define use-import
+        (macro (package-name)
+               (use-module (import package-name))))
+;We can't use import yet because it tries to load core which causes infinite recursion.
+(define use-import-core
+        (macro (package-name)
+               (use-module (import-core package-name))))
+
+(use-import-core "ca.awoo.lillil.core.define")

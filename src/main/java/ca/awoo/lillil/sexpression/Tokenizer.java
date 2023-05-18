@@ -27,6 +27,7 @@ public class Tokenizer {
         APOSTROPHE,
         TILDE,
         COLON,
+        COMMENT,
     }
 
     class Token {
@@ -81,7 +82,7 @@ public class Tokenizer {
         new TokenReader(TokenType.OPEN_BRACE, "\\{"),
         new TokenReader(TokenType.CLOSE_BRACE, "\\}"),
         new TokenReader(TokenType.STRING, "\"(?:[^\"\\\\]|\\\\\"|\\\\)*\""),
-        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d'~#:\\{\\}][^\\s\\(\\)\"\\{\\}]*"),
+        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d'~#:\\{\\}][^\\s\\(\\)\"\\{\\},]*"),
         new TokenReader(TokenType.INTEGER, "-?\\d+"),
         new TokenReader(TokenType.LONG, "-?\\d+[Ll]"),
         new TokenReader(TokenType.FLOAT, "-?\\d*\\.\\d+f"),
@@ -90,7 +91,8 @@ public class Tokenizer {
         new TokenReader(TokenType.WHITESPACE, "[\\s,]+"),
         new TokenReader(TokenType.APOSTROPHE, "'"),
         new TokenReader(TokenType.TILDE, "~"),
-        new TokenReader(TokenType.COLON, ":")
+        new TokenReader(TokenType.COLON, ":"),
+        new TokenReader(TokenType.COMMENT, ";[^\\n]*")
     );
 
     public Tokenizer(String input) {

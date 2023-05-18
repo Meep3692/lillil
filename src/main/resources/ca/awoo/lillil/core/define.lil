@@ -7,3 +7,6 @@
         (macro (name args body) 
                (define name 
                        (macro args body))))
+
+{:defn defn,
+ :defmacro defmacro}

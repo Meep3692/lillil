@@ -15,4 +15,8 @@ public class SMapKey extends SExpression{
         }
         return false;
     }
+
+    public String toString(){
+        return ":" + value;
+    }
 }

@@ -1,4 +1,4 @@
-package ca.awoo.lillil.core;
+package ca.awoo.lillil.core.lang;
 
 import java.util.HashMap;
 import java.util.Map;

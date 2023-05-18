@@ -1,4 +1,4 @@
-package ca.awoo.lillil.core;
+package ca.awoo.lillil.core.lang;
 
 import ca.awoo.lillil.LillilRuntimeException;
 import ca.awoo.lillil.sexpression.Parser;

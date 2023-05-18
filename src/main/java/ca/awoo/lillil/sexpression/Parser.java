@@ -84,6 +84,7 @@ public class Parser {
                 result = parseMapKey();
                 break;
             case WHITESPACE:
+            case COMMENT:
                 //Ignore whitespace
                 //Read next to remove it from the list
                 next();
@@ -109,7 +110,20 @@ public class Parser {
         Token next = next();
         if(next.getType() != Tokenizer.TokenType.OPEN_BRACE)
             throw new ParserException(next.start, next.line, next.column, next, "Expected open brace");
-        Map<SMapKey, SExpression> map = new HashMap<SMapKey, SExpression>();
+        SList list = new SList();
+        list.add(new SSymbol("new-map"));
+        while(lookahead().getType() != Tokenizer.TokenType.CLOSE_BRACE){
+            SExpression nextExpression = parseNextExpression();
+            list.add(nextExpression);
+            if(!hasNext())
+                throw new ParserException(next.start, next.line, next.column, next, "Expected end of input in map. Perhaps you forgot a close brace?");
+        }
+        next = next();
+        if(next.getType() != Tokenizer.TokenType.CLOSE_BRACE)
+            throw new ParserException(next.start, next.line, next.column, next, "Expected close brace, which it was in the lookahead, so this should never happen");
+        return new SList(list);
+        //The parser can't be responsible for building a map
+        /*Map<SMapKey, SExpression> map = new HashMap<SMapKey, SExpression>();
         while(lookahead().getType() != Tokenizer.TokenType.CLOSE_BRACE){
             SExpression keyexp = parseNextExpression();
             if(!(keyexp instanceof SMapKey)){
@@ -126,7 +140,7 @@ public class Parser {
         next = next();
         if(next.getType() != Tokenizer.TokenType.CLOSE_BRACE)
             throw new ParserException(next.start, next.line, next.column, next, "Expected close brace, which it was in the lookahead, so this should never happen");
-        return new SMap(map);
+        return new SMap(map);*/
     }
 
     private SExpression parseMapKey() throws ParserException {
