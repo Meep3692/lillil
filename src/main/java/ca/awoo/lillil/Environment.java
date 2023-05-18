@@ -7,7 +7,10 @@ import java.util.Map;
 
 import ca.awoo.lillil.sexpression.SExpression;
 import ca.awoo.lillil.sexpression.SFunction;
+import ca.awoo.lillil.sexpression.SList;
 import ca.awoo.lillil.sexpression.SMacro;
+import ca.awoo.lillil.sexpression.SMap;
+import ca.awoo.lillil.sexpression.SMapKey;
 import ca.awoo.lillil.sexpression.SSymbol;
 
 public class Environment {
@@ -53,7 +56,8 @@ public class Environment {
             return sexpr;
         }
         else if(sexpr.isList()) {
-            SExpression first = sexpr.asList().get(0);
+            SList slist = sexpr.asList();
+            SExpression first = slist.get(0);
             while(first.isList()){
                 first = evaluate(first);
             }
@@ -66,14 +70,25 @@ public class Environment {
             }
             if(first instanceof SFunction){
                 SFunction function = (SFunction)first;
-                List<SExpression> list = new ArrayList<SExpression>(sexpr.asList().size());
-                for(SExpression subsexpr : sexpr.asList().subList(1, sexpr.asList().size())) {
+                List<SExpression> list = new ArrayList<SExpression>(slist.size());
+                for(SExpression subsexpr : slist.subList(1, sexpr.asList().size())) {
                     list.add(evaluate(subsexpr));
                 }
                 return function.apply(list.toArray(new SExpression[0]));
             }else if(first instanceof SMacro){
                 SMacro macro = (SMacro)first;
-                return macro.apply(this, sexpr.asList().subList(1, sexpr.asList().size()).toArray(new SExpression[0]));
+                return macro.apply(this, slist.subList(1, slist.size()).toArray(new SExpression[0]));
+            }else if(first instanceof SMapKey){
+                //Retrieve value from map
+                SMapKey key = (SMapKey)first;
+                if(slist.size() != 2){
+                    throw new LillilRuntimeArityException(sexpr, "get", 2, slist.size() + 1, false);
+                }
+                SExpression map = evaluate(slist.get(1));
+                if(!(map instanceof SMap)){
+                    throw new LillilRuntimeException(map, "Attempted to get a value from a non-map type");
+                }
+                return ((SMap)map).get(key);
             }else{
                 throw new LillilRuntimeException(first.position, first.line, first.column, first, "Attempted to call a non-executable type");
             }

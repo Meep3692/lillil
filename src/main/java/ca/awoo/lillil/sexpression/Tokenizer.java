@@ -14,6 +14,8 @@ public class Tokenizer {
     enum TokenType {
         OPEN_PAREN,
         CLOSE_PAREN,
+        OPEN_BRACE,
+        CLOSE_BRACE,
         STRING,
         SYMBOL,
         INTEGER,
@@ -24,6 +26,7 @@ public class Tokenizer {
         WHITESPACE,
         APOSTROPHE,
         TILDE,
+        COLON,
     }
 
     class Token {
@@ -44,6 +47,10 @@ public class Tokenizer {
 
         public String getValue() {
             return value;
+        }
+
+        public String toString(){
+            return type.toString() + " " + value;
         }
     }
 
@@ -71,16 +78,19 @@ public class Tokenizer {
     private final List<TokenReader> readers = Arrays.asList(
         new TokenReader(TokenType.OPEN_PAREN, "\\("),
         new TokenReader(TokenType.CLOSE_PAREN, "\\)"),
+        new TokenReader(TokenType.OPEN_BRACE, "\\{"),
+        new TokenReader(TokenType.CLOSE_BRACE, "\\}"),
         new TokenReader(TokenType.STRING, "\"(?:[^\"\\\\]|\\\\\"|\\\\)*\""),
-        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d'~#][^\\s\\(\\)\"]*"),
+        new TokenReader(TokenType.SYMBOL, "[^\\s\\(\\)\"\\d'~#:\\{\\}][^\\s\\(\\)\"\\{\\}]*"),
         new TokenReader(TokenType.INTEGER, "-?\\d+"),
         new TokenReader(TokenType.LONG, "-?\\d+[Ll]"),
         new TokenReader(TokenType.FLOAT, "-?\\d*\\.\\d+f"),
         new TokenReader(TokenType.DOUBLE, "-?\\d*\\.\\d+"),
         new TokenReader(TokenType.BOOLEAN, "#[tf]"),
-        new TokenReader(TokenType.WHITESPACE, "\\s+"),
+        new TokenReader(TokenType.WHITESPACE, "[\\s,]+"),
         new TokenReader(TokenType.APOSTROPHE, "'"),
-        new TokenReader(TokenType.TILDE, "~")
+        new TokenReader(TokenType.TILDE, "~"),
+        new TokenReader(TokenType.COLON, ":")
     );
 
     public Tokenizer(String input) {

@@ -1,7 +1,9 @@
 package ca.awoo.lillil.sexpression;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.awoo.lillil.sexpression.Tokenizer.Token;
 
@@ -48,6 +50,9 @@ public class Parser {
             case OPEN_PAREN:
                 result = parseList();
                 break;
+            case OPEN_BRACE:
+                result = parseMap();
+                break;
             case STRING:
                 result = parseString();
                 break;
@@ -75,6 +80,9 @@ public class Parser {
             case TILDE:
                 result = parseUnquote();
                 break;
+            case COLON:
+                result = parseMapKey();
+                break;
             case WHITESPACE:
                 //Ignore whitespace
                 //Read next to remove it from the list
@@ -89,11 +97,53 @@ public class Parser {
         return result;
     }
 
+    private SExpression parseNextExpression() throws ParserException{
+        SExpression out = null;
+        while(out == null){
+            out = parseExpression();
+        }
+        return out;
+    }
+
+    private SExpression parseMap() throws ParserException {
+        Token next = next();
+        if(next.getType() != Tokenizer.TokenType.OPEN_BRACE)
+            throw new ParserException(next.start, next.line, next.column, next, "Expected open brace");
+        Map<SMapKey, SExpression> map = new HashMap<SMapKey, SExpression>();
+        while(lookahead().getType() != Tokenizer.TokenType.CLOSE_BRACE){
+            SExpression keyexp = parseNextExpression();
+            if(!(keyexp instanceof SMapKey)){
+                throw new ParserException(keyexp.position, keyexp.line, keyexp.column, next, "Expected map key");
+            }
+            if(!hasNext())
+                throw new ParserException(next.start, next.line, next.column, next, "Expected end of input in map. Perhaps you forgot a close brace?");
+            SExpression value = parseNextExpression();
+            map.put((SMapKey)keyexp, value);
+            if(!hasNext())
+                throw new ParserException(next.start, next.line, next.column, next, "Expected end of input in map. Perhaps you forgot a close brace?");
+        }
+        //Consume final closing brace
+        next = next();
+        if(next.getType() != Tokenizer.TokenType.CLOSE_BRACE)
+            throw new ParserException(next.start, next.line, next.column, next, "Expected close brace, which it was in the lookahead, so this should never happen");
+        return new SMap(map);
+    }
+
+    private SExpression parseMapKey() throws ParserException {
+        Token next = next();
+        if(!(next.getType() == Tokenizer.TokenType.COLON))
+            throw new ParserException(next.start, next.line, next.column, next, "Expected colon");
+        SExpression key = parseNextExpression();
+        if(!(key instanceof SSymbol))
+            throw new ParserException(key.position, key.line, key.column, next, "Map key must be a symbol");
+        return new SMapKey(key.asSymbol().value);
+    }
+
     private SExpression parseQuote() throws ParserException {
         Token next = next();
         if(!(next.getType() == Tokenizer.TokenType.APOSTROPHE))
             throw new ParserException(next.start, next.line, next.column, next, "Expected apostrophe");
-        SExpression quoted = parseExpression();
+        SExpression quoted = parseNextExpression();
         return new SList(new SSymbol("quote"), quoted);
     }
 
@@ -101,7 +151,7 @@ public class Parser {
         Token next = next();
         if(!(next.getType() == Tokenizer.TokenType.TILDE))
             throw new ParserException(next.start, next.line, next.column, next, "Expected tilde");
-        SExpression quoted = parseExpression();
+        SExpression quoted = parseNextExpression();
         return new SList(new SSymbol("eval"), quoted);
     }
 
@@ -174,9 +224,8 @@ public class Parser {
             throw new ParserException(next.start, next.line, next.column, next, "Expected open paren");
         List<SExpression> list = new ArrayList<SExpression>();
         while(lookahead().getType() != Tokenizer.TokenType.CLOSE_PAREN){
-            SExpression nextExpression = parseExpression();
-            if(nextExpression != null)
-                list.add(nextExpression);
+            SExpression nextExpression = parseNextExpression();
+            list.add(nextExpression);
             if(!hasNext())
                 throw new ParserException(next.start, next.line, next.column, next, "Expected end of input in list. Perhaps you forgot a close paren?");
         }

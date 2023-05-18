@@ -38,6 +38,10 @@ public abstract class SExpression{
         return (SSymbol)this;
     }
 
+    public SMap asMap() {
+        return (SMap)this;
+    }
+
     public boolean isBoolean() {
         return this instanceof SBoolean;
     }
@@ -68,6 +72,10 @@ public abstract class SExpression{
 
     public boolean isSymbol() {
         return this instanceof SSymbol;
+    }
+
+    public boolean isMap() {
+        return this instanceof SMap;
     }
 
     public boolean isNumber(){

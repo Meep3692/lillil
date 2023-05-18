@@ -7,6 +7,8 @@ import org.junit.Test;
 import ca.awoo.lillil.sexpression.Parser;
 import ca.awoo.lillil.sexpression.ParserException;
 import ca.awoo.lillil.sexpression.SExpression;
+import ca.awoo.lillil.sexpression.SMap;
+import ca.awoo.lillil.sexpression.SMapKey;
 import ca.awoo.lillil.sexpression.TokenizerException;
 
 import static org.junit.Assert.*;
@@ -56,6 +58,17 @@ public class ParserTest {
         assertTrue("Expected SString but got "  + expressions.get(5).getClass().getSimpleName(), expressions.get(5).isString());
         assertTrue("Expected SSymbol but got "  + expressions.get(6).getClass().getSimpleName(), expressions.get(6).isSymbol());
         assertTrue("Expected SList but got "    + expressions.get(7).getClass().getSimpleName(), expressions.get(7).isList());
+    }
+
+    @Test
+    public void mapTest() throws TokenizerException, ParserException{
+        Parser parser = new Parser("{:key1 \"value1\", :key2 \"value2\"}");
+        List<SExpression> expressions = parser.getExpressions();
+        System.out.println(expressions);
+        assertTrue("Expected SMap but got " + expressions.get(0).getClass().getSimpleName(), expressions.get(0).isMap());
+        SMap map = expressions.get(0).asMap();
+        assertEquals("value1", map.get(new SMapKey("key1")).asString().value);
+        assertEquals("value2", map.get(new SMapKey("key2")).asString().value);
     }
     
 }
