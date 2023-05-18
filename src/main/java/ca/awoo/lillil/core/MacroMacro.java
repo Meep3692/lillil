@@ -13,23 +13,13 @@ import ca.awoo.lillil.sexpression.SSymbol;
 public class MacroMacro extends SMacro {
     @Override
     public SExpression apply(Environment env, SExpression... args) throws LillilRuntimeException {
-        SList arguments = new SList();
-        if(args.length != 2){
-            throw new LillilRuntimeException(this, "lambda takes two arguments");
-        }
-        if(!args[0].isList()){
-            throw new LillilRuntimeException(args[0], "Invalid type for argument list");
-        }
-        arguments = args[0].asList();
+        assertArity("macro", 2, args.length, false);
+        SList arguments  = assertArgType(args[0], SList.class);
         for(SExpression sexpr : arguments){
-            if(!sexpr.isSymbol()){
-                throw new LillilRuntimeException(sexpr, "Invalid type for argument, expected symbol");
-            }
+            assertArgType(sexpr, SSymbol.class);
         }
-        if(!args[1].isList()){
-            throw new LillilRuntimeException(args[1], "Invalid type for argument list");
-        }
-        return new Macro(env, arguments, args[1].asList());
+        SList body = assertArgType(args[1], SList.class);
+        return new Macro(env, arguments, body);
     }
 
     private SList findAndReplace(SList list, Map<SExpression, SExpression> replace){
@@ -75,7 +65,7 @@ public class MacroMacro extends SMacro {
                     break;
                 }else{
                     if(i >= args.length){
-                        throw new LillilRuntimeException(this, "Not enough arguments");
+                        assertArity("macro", arguments.size(), args.length, false);
                     }
                     replace.put(arg, args[i]);
                 }

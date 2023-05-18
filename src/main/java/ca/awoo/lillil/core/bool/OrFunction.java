@@ -10,10 +10,8 @@ public class OrFunction extends SFunction{
     @Override
     public SExpression apply(SExpression... args) throws LillilRuntimeException {
         for(SExpression arg : args){
-            if(!arg.isBoolean()){
-                throw new LillilRuntimeException(arg, "or: expected boolean arguments");
-            }
-            if(arg.asBoolean().value){
+            SBoolean b = assertArgType(arg, SBoolean.class);
+            if(b.value){
                 return arg;
             }
         }

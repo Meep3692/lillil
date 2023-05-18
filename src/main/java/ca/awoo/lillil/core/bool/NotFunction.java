@@ -9,15 +9,9 @@ public class NotFunction extends SFunction {
 
     @Override
     public SExpression apply(SExpression... args) throws LillilRuntimeException {
-        if(args.length != 1){
-            //TODO: Create arity exception to make this consistent
-            throw new LillilRuntimeException(this, "not: arity mismatch; expected 1 argument, got " + args.length);
-        }
-        if(!args[0].isBoolean()){
-            //TODO: Create type exception to make this consistent
-            throw new LillilRuntimeException(args[0], "not: expected boolean, got " + args[0].getClass().getSimpleName());
-        }
-        return new SBoolean(!args[0].asBoolean().value);
+        assertArity("not", 1, args.length, false);
+        SBoolean b = assertArgType(args[0], SBoolean.class);
+        return new SBoolean(!b.value);
     }
     
 }

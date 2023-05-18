@@ -8,9 +8,7 @@ public class QuoteMacro extends ca.awoo.lillil.sexpression.SMacro{
 
     @Override
     public SExpression apply(Environment env, SExpression... args) throws LillilRuntimeException {
-        if(args.length != 1){
-            throw new LillilRuntimeException(this, "quote takes exactly one argument");
-        }
+        assertArity("quote", 1, args.length, false);
         return args[0];
     }
     

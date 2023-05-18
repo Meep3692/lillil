@@ -16,6 +16,8 @@ public class GreaterFunction extends SFunction {
                 if(a.compareTo(b) <= 0){
                     return new SBoolean(false);
                 }
+            }else{
+                throw new LillilRuntimeException(args[i], "Cannot compare " + args[i].getClass().getSimpleName() + " and " + args[i+1].getClass().getSimpleName());
             }
         }
         return new SBoolean(true);

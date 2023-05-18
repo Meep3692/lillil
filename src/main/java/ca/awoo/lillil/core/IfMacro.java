@@ -9,9 +9,7 @@ public class IfMacro extends SMacro {
 
     @Override
     public SExpression apply(Environment env, SExpression... args) throws LillilRuntimeException {
-        if(args.length != 3){
-            throw new LillilRuntimeException(this, "if takes exactly three arguments");
-        }
+        assertArity("if", 3, args.length, false);
         SExpression condition = args[0];
         SExpression trueBranch = args[1];
         SExpression falseBranch = args[2];

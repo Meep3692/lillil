@@ -4,22 +4,17 @@ import ca.awoo.lillil.Environment;
 import ca.awoo.lillil.LillilRuntimeException;
 import ca.awoo.lillil.sexpression.SExpression;
 import ca.awoo.lillil.sexpression.SMacro;
+import ca.awoo.lillil.sexpression.SSymbol;
 
 public class DefineMacro extends SMacro {
 
     @Override
     public SExpression apply(Environment env, SExpression... args) throws LillilRuntimeException {
-        if(args.length != 2){
-            throw new LillilRuntimeException(this, "define takes exactly two arguments");
-        }
-        SExpression name = args[0];
+        assertArity("define", 2, args.length, false);
+        SSymbol name = assertArgType(args[0], SSymbol.class);
         SExpression value = args[1];
-        if(name.isSymbol()){
-            env.setBinding(name.asSymbol().value, env.evaluate(value));
-            return name;
-        } else {
-            throw new LillilRuntimeException(this, "define takes a symbol as its first argument");
-        }
+        env.setBinding(name.value, env.evaluate(value));
+        return name;
     }
     
 }

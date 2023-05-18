@@ -12,9 +12,7 @@ public class ModFunction extends SFunction {
 
     @Override
     public SExpression apply(SExpression... args) throws LillilRuntimeException {
-        if(args.length != 2){
-            throw new LillilRuntimeException(this, "mod takes exactly two arguments");
-        }
+        assertArity("mod", 2, args.length, false);
         if(!args[0].isNumber()){
             throw new LillilRuntimeException(args[0], "mod takes a number as its first argument");
         }
