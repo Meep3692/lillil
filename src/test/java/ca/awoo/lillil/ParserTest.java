@@ -1,78 +1,140 @@
 package ca.awoo.lillil;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.junit.Test;
 
-import ca.awoo.lillil.sexpression.Parser;
-import ca.awoo.lillil.sexpression.ParserException;
-import ca.awoo.lillil.sexpression.SExpression;
-import ca.awoo.lillil.sexpression.SList;
-import ca.awoo.lillil.sexpression.SMap;
-import ca.awoo.lillil.sexpression.SMapKey;
-import ca.awoo.lillil.sexpression.TokenizerException;
+import ca.awoo.lillil.sexpr.Parser;
+import ca.awoo.lillil.sexpr.Symbol;
+import ca.awoo.lillil.sexpr.Key;
+import ca.awoo.lillil.sexpr.Parser.ParseException;
+import ca.awoo.lillil.sexpr.Tokenizer.TokenizerException;
 
-import static org.junit.Assert.*;
-
+/**
+ * Unit test for Parser.
+ */
 public class ParserTest {
+    /**
+     * Parse a string
+     * @throws ParseException
+     * @throws TokenizerException
+     */
     @Test
-    public void parserTest() throws TokenizerException, ParserException {
-        Parser parser = new Parser("(+ 1 2)");
-        List<SExpression> expressions = parser.getExpressions();
-        System.out.println("Test expressions size = 1");
-        assertEquals(1, expressions.size());
-        System.out.println("Test reparsing");
-        assertEquals(expressions, new Parser(expressions.get(0).toString()).getExpressions());
-        System.out.println("Test expressions.get(0).get(0) = +");
-        assertEquals("+", expressions.get(0).asList().get(0).toString());
-        System.out.println("Test expressions.get(0).get(1) = 1");
-        assertEquals("1", expressions.get(0).asList().get(1).toString());
-        System.out.println("Test expressions.get(0).get(2) = 2");
-        assertEquals("2", expressions.get(0).asList().get(2).toString());
+    public void testParseString() throws ParseException, TokenizerException {
+        String input = "\"hello\"";
+        Parser parser = new Parser();
+        String output = (String) parser.parse(input);
+        assertEquals("hello", output);
     }
 
+    /**
+     * Parse a number
+     * @throws ParseException
+     * @throws TokenizerException
+     */
     @Test
-    public void quoteTest() throws TokenizerException, ParserException {
-        Parser parser = new Parser("'(1 2 3)");
-        List<SExpression> expressions = parser.getExpressions();
-        System.out.println(expressions);
-        System.out.println("Test expressions size = 1");
-        assertEquals(1, expressions.size());
-        System.out.println("Check quote");
-        assertEquals("quote", expressions.get(0).asList().get(0).toString());
-        System.out.println("Check list");
-        assertEquals("1", expressions.get(0).asList().get(1).asList().get(0).toString());
-        assertEquals("2", expressions.get(0).asList().get(1).asList().get(1).toString());
-        assertEquals("3", expressions.get(0).asList().get(1).asList().get(2).toString());
+    public void testParseNumber() throws ParseException, TokenizerException {
+        String input = "72.6";
+        Parser parser = new Parser();
+        double output = (double) parser.parse(input);
+        assertEquals(72.6, output, 0.0001);
     }
 
+    /**
+     * Parse a symbol
+     * @throws ParseException
+     * @throws TokenizerException
+     */
     @Test
-    public void typeTest() throws TokenizerException, ParserException{
-        Parser parser = new Parser("#t 3.141592 3.14f 7 1234567890L \"Hello, world!\" symbol (list elements)");
-        List<SExpression> expressions = parser.getExpressions();
-        System.out.println(expressions);
-        assertTrue("Expected SBoolean but got " + expressions.get(0).getClass().getSimpleName(), expressions.get(0).isBoolean());
-        assertTrue("Expected SDouble but got "  + expressions.get(1).getClass().getSimpleName(), expressions.get(1).isDouble());
-        assertTrue("Expected SFloat but got "   + expressions.get(2).getClass().getSimpleName(), expressions.get(2).isFloat());
-        assertTrue("Expected SInteger but got " + expressions.get(3).getClass().getSimpleName(), expressions.get(3).isInteger());
-        assertTrue("Expected SLong but got "    + expressions.get(4).getClass().getSimpleName(), expressions.get(4).isLong());
-        assertTrue("Expected SString but got "  + expressions.get(5).getClass().getSimpleName(), expressions.get(5).isString());
-        assertTrue("Expected SSymbol but got "  + expressions.get(6).getClass().getSimpleName(), expressions.get(6).isSymbol());
-        assertTrue("Expected SList but got "    + expressions.get(7).getClass().getSimpleName(), expressions.get(7).isList());
+    public void testParseSymbol() throws ParseException, TokenizerException {
+        String input = "hello";
+        Parser parser = new Parser();
+        Symbol output = (Symbol) parser.parse(input);
+        assertEquals("hello", output.value);
     }
 
+    /**
+     * Parse a boolean
+     * @throws ParseException
+     * @throws TokenizerException
+     */
     @Test
-    public void mapTest() throws TokenizerException, ParserException{
-        Parser parser = new Parser("{:key1 \"value1\", :key2 \"value2\"}");
-        List<SExpression> expressions = parser.getExpressions();
-        System.out.println(expressions);
-        assertTrue("Expected SList but got " + expressions.get(0).getClass().getSimpleName(), expressions.get(0).isList());
-        SList map = expressions.get(0).asList();
-        assertEquals("new-map", map.get(0).toString());
-        assertEquals(":key1", map.get(1).toString());
-        assertEquals("\"value1\"", map.get(2).toString());
-        assertEquals(":key2", map.get(3).toString());
-        assertEquals("\"value2\"", map.get(4).toString());
+    public void testParseBoolean() throws ParseException, TokenizerException {
+        String input = "#t";
+        Parser parser = new Parser();
+        boolean output = (boolean) parser.parse(input);
+        assertEquals(true, output);
     }
-    
+
+    /**
+     * Parse a list
+     * @throws ParseException
+     * @throws TokenizerException
+     */
+    @Test
+    public void testParseList() throws ParseException, TokenizerException {
+        String input = "(1 2 3)";
+        Parser parser = new Parser();
+        List<Object> output = (List<Object>) parser.parse(input);
+        assertEquals(3, output.size());
+        assertEquals(1.0, (double)output.get(0), 0.0001);
+        assertEquals(2.0, (double)output.get(1), 0.0001);
+        assertEquals(3.0, (double)output.get(2), 0.0001);
+    }
+
+    /**
+     * Parse a list with a nested list
+     * @throws ParseException
+     * @throws TokenizerException
+     */
+    @Test
+    public void testParseNestedList() throws ParseException, TokenizerException {
+        String input = "(1 (2 3) 4)";
+        Parser parser = new Parser();
+        List<Object> output = (List<Object>) parser.parse(input);
+        assertEquals(3, output.size());
+        assertEquals(1.0, (double)output.get(0), 0.0001);
+        assertEquals(4.0, (double)output.get(2), 0.0001);
+        List<Object> nested = (List<Object>) output.get(1);
+        assertEquals(2.0, (double)nested.get(0), 0.0001);
+        assertEquals(3.0, (double)nested.get(1), 0.0001);
+    }
+
+    /**
+     * Parse a quoted list
+     * @throws ParseException
+     * @throws TokenizerException
+     */
+    @Test
+    public void testParseQuotedList() throws ParseException, TokenizerException {
+        String input = "'(1 2 3)";
+        Parser parser = new Parser();
+        List<Object> output = (List<Object>) parser.parse(input);
+        assertEquals(2, output.size());
+        assertEquals("quote", ((Symbol)output.get(0)).value);
+        List<Object> nested = (List<Object>) output.get(1);
+        assertEquals(1.0, (double)nested.get(0), 0.0001);
+        assertEquals(2.0, (double)nested.get(1), 0.0001);
+        assertEquals(3.0, (double)nested.get(2), 0.0001);
+    }
+
+    /**
+     * Parse a map
+     * @throws ParseException
+     * @throws TokenizerException
+     */
+    @Test
+    public void testParseMap() throws ParseException, TokenizerException {
+        String input = "{:a 1 :b 2}";
+        Parser parser = new Parser();
+        List<Object> output = (List<Object>) parser.parse(input);
+        assertEquals(5, output.size());
+        assertEquals("hashmap", ((Symbol)output.get(0)).value);
+        assertEquals("a", ((Key)output.get(1)).value);
+        assertEquals(1.0, (double)output.get(2), 0.0001);
+        assertEquals("b", ((Key)output.get(3)).value);
+        assertEquals(2.0, (double)output.get(4), 0.0001);
+    }
 }
