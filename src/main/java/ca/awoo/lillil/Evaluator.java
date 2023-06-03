@@ -1,5 +1,7 @@
 package ca.awoo.lillil;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -188,7 +190,22 @@ public class Evaluator {
             } else if(args.get(0) == null){
                 throw new LillilRuntimeException("Attempt to map-index into null, key: " + key.value);
             } else {
-                throw new LillilRuntimeException("Attempt to map-index into non-map: " + args.get(0).getClass().getName());
+                //throw new LillilRuntimeException("Attempt to map-index into non-map: " + args.get(0).getClass().getName());
+                //Lets use reflection hell to get stuff out of Java objects
+                Object jobject = args.get(0);
+                try {
+                    Field field = jobject.getClass().getField(key.value);
+                    return field.get(jobject);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    //Get and wrap methods
+                    Method[] methods = jobject.getClass().getMethods();
+                    for(Method method : methods){
+                        if(method.getName().equals(key.value)){
+                            return new MethodWrapFunction(key.value, jobject);
+                        }
+                    }
+                    throw new LillilRuntimeException("Attempt to map-index into non-map: " + args.get(0).getClass().getName());
+                }
             }
         } else if (exec == null){
             throw new LillilRuntimeException("Attempt to execute null value");
