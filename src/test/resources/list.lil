@@ -1,0 +1,39 @@
+(use-import "test")
+
+;List tests
+;List car
+(assert-equals 1 (car (list 1 2)))
+(assert-equals 1 (car (list 1)))
+(assert-equals 1 (car (list 1 2 3 4)))
+
+;List cdr
+(assert-equals (list 2) (cdr (list 1 2)))
+(assert-equals (list) (cdr (list 1)))
+(assert-equals (list 2 3 4) (cdr (list 1 2 3 4)))
+
+;List cons
+(assert-equals (list 1 2) (cons 1 (list 2)))
+(assert-equals (list 1) (cons 1 (list)))
+(assert-equals (list 1 2 3 4) (cons 1 (list 2 3 4)))
+
+;List concat
+(assert-equals (list 1 2) (concat (list 1) (list 2)))
+(assert-equals (list 1 2 3) (concat (list 1) (list 2 3)))
+(assert-equals (list 1 2 3 4) (concat (list 1 2) (list 3 4)))
+(assert-equals (list 1 2 3 4 5) (concat (list 1 2) (list 3 4) (list 5)))
+
+;List append
+(assert-equals (list 1 2) (append (list 1) 2))
+(assert-equals (list 1 (list 2 3)) (append (list 1) (list 2 3)))
+(assert-equals (list 1 2 3) (append (list 1 2) 3))
+(assert-equals (list 1 2 3 4) (append (list 1 2) 3 4))
+
+;List length
+(assert-equals 0 (len (list)))
+(assert-equals 1 (len (list 1)))
+(assert-equals 2 (len (list 1 2)))
+
+;Empty list
+(assert-true (empty? (list)))
+(assert-false (empty? (list 1)))
+(assert-false (empty? (list 1 2)))

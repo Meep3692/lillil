@@ -1,0 +1,75 @@
+(use-import "test")
+
+;Type checks
+;list
+(assert-true  (list? (list 1 2)))    ;list
+(assert-false (list? bogus))         ;null
+(assert-false (list? 1))             ;number
+(assert-false (list? "string"))      ;string
+(assert-false (list? #t))            ;boolean
+(assert-false (list? 'bogus))        ;symbol
+(assert-false (list? ':key))         ;key
+(assert-false (list? (lambda () 1))) ;lambda
+
+;null
+(assert-false (null? (list 1 2)))    ;list
+(assert-true  (null? bogus))         ;null
+(assert-false (null? 1))             ;number
+(assert-false (null? "string"))      ;string
+(assert-false (null? #t))            ;boolean
+(assert-false (null? 'bogus))        ;symbol
+(assert-false (null? ':key))         ;key
+(assert-false (null? (lambda () 1))) ;lambda
+
+;number
+(assert-false (number? (list 1 2)))    ;list
+(assert-false (number? bogus))         ;null
+(assert-true  (number? 1))             ;number
+(assert-false (number? "string"))      ;string
+(assert-false (number? #t))            ;boolean
+(assert-false (number? 'bogus))        ;symbol
+(assert-false (number? ':key))         ;key
+(assert-false (number? (lambda () 1))) ;lambda
+
+;string
+(assert-false (string? (list 1 2)))    ;list
+(assert-false (string? bogus))         ;null
+(assert-false (string? 1))             ;number
+(assert-true  (string? "string"))      ;string
+(assert-false (string? #t))            ;boolean
+(assert-false (string? 'bogus))        ;symbol
+(assert-false (string? ':key))         ;key
+(assert-false (string? (lambda () 1))) ;lambda
+
+;boolean
+(assert-false (boolean? (list 1 2)))    ;list
+(assert-false (boolean? bogus))         ;null
+(assert-false (boolean? 1))             ;number
+(assert-false (boolean? "string"))      ;string
+(assert-true  (boolean? #t))            ;boolean
+(assert-false (boolean? 'bogus))        ;symbol
+(assert-false (boolean? ':key))         ;key
+(assert-false (boolean? (lambda () 1))) ;lambda
+
+;symbol
+(assert-false (symbol? (list 1 2)))    ;list
+(assert-false (symbol? bogus))         ;null
+(assert-false (symbol? 1))             ;number
+(assert-false (symbol? "string"))      ;string
+(assert-false (symbol? #t))            ;boolean
+(assert-true  (symbol? 'bogus))        ;symbol
+(assert-false (symbol? ':key))         ;key
+(assert-false (symbol? (lambda () 1))) ;lambda
+
+;key
+(assert-false (key? (list 1 2)))    ;list
+(assert-false (key? bogus))         ;null
+(assert-false (key? 1))             ;number
+(assert-false (key? "string"))      ;string
+(assert-false (key? #t))            ;boolean
+(assert-false (key? 'bogus))        ;symbol
+(assert-true  (key? ':key))         ;key
+(assert-false (key? (lambda () 1))) ;lambda
+
+;lambda
+;TODO: Add lambda? to core

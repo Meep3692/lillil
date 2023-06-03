@@ -23,4 +23,20 @@ public class LillilTest {
         lillil.addModuleLoader(new TestNativeModuleLoader(lillil));
         lillil.evalAll(LillilTest.class.getResourceAsStream("/comparison.lil"));
     }
+
+    @Test
+    public void listTest() throws ParseException, TokenizerException, LillilRuntimeException, IOException{
+        Lillil lillil = new Lillil();
+        lillil.useCoreModule();
+        lillil.addModuleLoader(new TestNativeModuleLoader(lillil));
+        lillil.evalAll(LillilTest.class.getResourceAsStream("/list.lil"));
+    }
+
+    @Test
+    public void typeChecksTest() throws ParseException, TokenizerException, LillilRuntimeException, IOException {
+        Lillil lillil = new Lillil();
+        lillil.useCoreModule();
+        lillil.addModuleLoader(new TestNativeModuleLoader(lillil));
+        lillil.evalAll(LillilTest.class.getResourceAsStream("/type-checks.lil"));
+    }
 }

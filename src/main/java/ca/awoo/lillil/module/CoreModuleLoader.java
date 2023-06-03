@@ -203,7 +203,9 @@ public class CoreModuleLoader extends NativeModuleLoader{
             @Override
             public Object apply(Object... args) {
                 List<Object> list = new ArrayList<>((List<Object>) args[0]);
-                list.addAll((List<Object>) args[1]);
+                for(int i = 1; i < args.length; i++){
+                    list.addAll((List<Object>) args[i]);
+                }
                 return list;
             }
         });
@@ -211,14 +213,16 @@ public class CoreModuleLoader extends NativeModuleLoader{
             @Override
             public Object apply(Object... args) {
                 List<Object> list = new ArrayList<>((List<Object>) args[0]);
-                list.add(args[1]);
+                for(int i = 1; i < args.length; i++){
+                    list.add(args[i]);
+                }
                 return list;
             }
         });
         this.module.put("len", new Function() {
             @Override
             public Object apply(Object... args) {
-                return ((List<Object>) args[0]).size();
+                return (double)((List<Object>) args[0]).size();
             }
         });
         this.module.put("empty?", new Function() {
