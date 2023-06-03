@@ -1,26 +1,19 @@
-package ca.awoo.lillil;
+package ca.awoo.lillil.module;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import ca.awoo.lillil.sexpr.Key;
-import ca.awoo.lillil.sexpr.Symbol;
+import ca.awoo.lillil.*;
+import ca.awoo.lillil.sexpr.*;
+import ca.awoo.lillil.sexpr.Parser.ParseException;
+import ca.awoo.lillil.sexpr.Tokenizer.TokenizerException;
 
 /**
- * Core lillil environment.
- * Comes with basic functionality like math and comparison.
+ * A loader for loading the core module.
  */
-public class CoreEnvironment extends Environment {
-
-    /**
-     * Create a new core environment.
-     * @param parent The parent environment.
-     */
-    public CoreEnvironment(Environment parent){
-        super(parent);
-        bind("+", new Function() {
+public class CoreModuleLoader extends NativeModuleLoader{
+    public CoreModuleLoader(Lillil lillil){
+        super(lillil, "core");
+        this.module.put("+", new Function() {
             @Override
             public Object apply(Object... args) {
                 double sum = 0;
@@ -30,7 +23,7 @@ public class CoreEnvironment extends Environment {
                 return sum;
             }
         });
-        bind("-", new Function() {
+        this.module.put("-", new Function() {
             @Override
             public Object apply(Object... args) {
                 double difference = (double) args[0];
@@ -40,7 +33,7 @@ public class CoreEnvironment extends Environment {
                 return difference;
             }
         });
-        bind("*", new Function() {
+        this.module.put("*", new Function() {
             @Override
             public Object apply(Object... args) {
                 double product = 1;
@@ -50,7 +43,7 @@ public class CoreEnvironment extends Environment {
                 return product;
             }
         });
-        bind("/", new Function() {
+        this.module.put("/", new Function() {
             @Override
             public Object apply(Object... args) {
                 double quotient = (double) args[0];
@@ -60,7 +53,7 @@ public class CoreEnvironment extends Environment {
                 return quotient;
             }
         });
-        bind("=", new Function() {
+        this.module.put("=", new Function() {
             @Override
             public Object apply(Object... args) {
                 Object first = args[0];
@@ -72,7 +65,7 @@ public class CoreEnvironment extends Environment {
                 return true;
             }
         });
-        bind("<", new Function() {
+        this.module.put("<", new Function() {
             @Override
             public Object apply(Object... args) {
                 double first = (double) args[0];
@@ -84,7 +77,7 @@ public class CoreEnvironment extends Environment {
                 return true;
             }
         });
-        bind(">", new Function() {
+        this.module.put(">", new Function() {
             @Override
             public Object apply(Object... args) {
                 double first = (double) args[0];
@@ -96,7 +89,7 @@ public class CoreEnvironment extends Environment {
                 return true;
             }
         });
-        bind("<=", new Function() {
+        this.module.put("<=", new Function() {
             @Override
             public Object apply(Object... args) {
                 double first = (double) args[0];
@@ -108,7 +101,7 @@ public class CoreEnvironment extends Environment {
                 return true;
             }
         });
-        bind(">=", new Function() {
+        this.module.put(">=", new Function() {
             @Override
             public Object apply(Object... args) {
                 double first = (double) args[0];
@@ -120,7 +113,7 @@ public class CoreEnvironment extends Environment {
                 return true;
             }
         });
-        bind("and", new Function() {
+        this.module.put("and", new Function() {
             @Override
             public Object apply(Object... args) {
                 for (Object arg : args) {
@@ -131,7 +124,7 @@ public class CoreEnvironment extends Environment {
                 return true;
             }
         });
-        bind("or", new Function() {
+        this.module.put("or", new Function() {
             @Override
             public Object apply(Object... args) {
                 for (Object arg : args) {
@@ -142,31 +135,31 @@ public class CoreEnvironment extends Environment {
                 return false;
             }
         });
-        bind("not", new Function() {
+        this.module.put("not", new Function() {
             @Override
             public Object apply(Object... args) {
                 return !(boolean) args[0];
             }
         });
-        bind("list", new Function() {
+        this.module.put("list", new Function() {
             @Override
             public Object apply(Object... args) {
                 return Arrays.asList(args);
             }
         });
-        bind("car", new Function() {
+        this.module.put("car", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((List<Object>) args[0]).get(0);
             }
         });
-        bind("cdr", new Function() {
+        this.module.put("cdr", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((List<Object>) args[0]).subList(1, ((List<Object>) args[0]).size());
             }
         });
-        bind("cons", new Function() {
+        this.module.put("cons", new Function() {
             @Override
             public Object apply(Object... args) {
                 List<Object> list = new ArrayList<>((List<Object>) args[1]);
@@ -174,7 +167,7 @@ public class CoreEnvironment extends Environment {
                 return list;
             }
         });
-        bind("concat", new Function() {
+        this.module.put("concat", new Function() {
             @Override
             public Object apply(Object... args) {
                 List<Object> list = new ArrayList<>((List<Object>) args[0]);
@@ -182,7 +175,7 @@ public class CoreEnvironment extends Environment {
                 return list;
             }
         });
-        bind("append", new Function() {
+        this.module.put("append", new Function() {
             @Override
             public Object apply(Object... args) {
                 List<Object> list = new ArrayList<>((List<Object>) args[0]);
@@ -190,109 +183,109 @@ public class CoreEnvironment extends Environment {
                 return list;
             }
         });
-        bind("len", new Function() {
+        this.module.put("len", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((List<Object>) args[0]).size();
             }
         });
-        bind("empty?", new Function() {
+        this.module.put("empty?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((List<Object>) args[0]).isEmpty();
             }
         });
-        bind("list?", new Function() {
+        this.module.put("list?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0] instanceof List;
             }
         });
-        bind("null?", new Function() {
+        this.module.put("null?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0] == null;
             }
         });
-        bind("number?", new Function() {
+        this.module.put("number?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0] instanceof Double;
             }
         });
-        bind("string?", new Function() {
+        this.module.put("string?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0] instanceof String;
             }
         });
-        bind("boolean?", new Function() {
+        this.module.put("boolean?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0] instanceof Boolean;
             }
         });
-        bind("symbol?", new Function() {
+        this.module.put("symbol?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0] instanceof Symbol;
             }
         });
-        bind("key?", new Function() {
+        this.module.put("key?", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0] instanceof Key;
             }
         });
-        bind("symbol->string", new Function() {
+        this.module.put("symbol->string", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((Symbol) args[0]).value;
             }
         });
-        bind("string->symbol", new Function() {
+        this.module.put("string->symbol", new Function() {
             @Override
             public Object apply(Object... args) {
                 return new Symbol((String) args[0]);
             }
         });
-        bind("key->string", new Function() {
+        this.module.put("key->string", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((Key) args[0]).value;
             }
         });
-        bind("string->key", new Function() {
+        this.module.put("string->key", new Function() {
             @Override
             public Object apply(Object... args) {
                 return new Key((String) args[0]);
             }
         });
-        bind("number->string", new Function() {
+        this.module.put("number->string", new Function() {
             @Override
             public Object apply(Object... args) {
                 return args[0].toString();
             }
         });
-        bind("string->number", new Function() {
+        this.module.put("string->number", new Function() {
             @Override
             public Object apply(Object... args) {
                 return Double.parseDouble((String) args[0]);
             }
         });
-        bind("boolean->string", new Function() {
+        this.module.put("boolean->string", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((Boolean)args[0]) ? "#t" : "#f";
             }
         });
-        bind("string->boolean", new Function() {
+        this.module.put("string->boolean", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((String)args[0]).equals("#t");
             }
         });
-        bind("string-append", new Function() {
+        this.module.put("string-append", new Function() {
             @Override
             public Object apply(Object... args) {
                 StringBuilder sb = new StringBuilder();
@@ -302,19 +295,19 @@ public class CoreEnvironment extends Environment {
                 return sb.toString();
             }
         });
-        bind("string-length", new Function() {
+        this.module.put("string-length", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((String) args[0]).length();
             }
         });
-        bind("string-ref", new Function() {
+        this.module.put("string-ref", new Function() {
             @Override
             public Object apply(Object... args) {
                 return ((String) args[0]).charAt((int) (double) args[1]);
             }
         });
-        bind("map", new Function() {
+        this.module.put("map", new Function() {
             @Override
             public Object apply(Object... args) throws LillilRuntimeException {
                 List<Object> list = new ArrayList<>();
@@ -334,6 +327,42 @@ public class CoreEnvironment extends Environment {
                 return list;
             }
         });
+        this.module.put("use", new Macro() {
+            @Override
+            public Object apply(Environment env, Object... args) throws LillilRuntimeException {
+                Evaluator eval = new Evaluator();
+                Object arg = eval.eval(args[0], env);
+                if(arg instanceof Map) {
+                    Map<Object, Object> map = (Map<Object, Object>) arg;
+                    for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                        if(entry.getKey() instanceof String) {
+                            env.bind((String)entry.getKey(), entry.getValue());
+                        } else {
+                            throw new LillilRuntimeException("use: get weird map with non-string keys");
+                        }
+                    }
+                    return null;
+                    
+                } else {
+                    throw new LillilRuntimeException("use: first argument must be a map");
+                }
+            }
+        });
+        this.module.put("use-import", new Macro() {
 
+            @Override
+            public Object apply(Environment env, Object... args) throws LillilRuntimeException {
+                if(args[0] instanceof String){
+                    try {
+                        return ((Macro)(module.get("use"))).apply(env, lillil.getModule((String) args[0]));
+                    } catch (ParseException | TokenizerException e) {
+                        throw new LillilRuntimeException("use-import: failed to import module " + args[0], e);
+                    }
+                } else {
+                    throw new LillilRuntimeException("use-import: first argument must be a string");
+                }
+            }
+
+        });
     }
 }

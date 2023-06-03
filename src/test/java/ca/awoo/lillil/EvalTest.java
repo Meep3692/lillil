@@ -34,10 +34,10 @@ public class EvalTest {
      */
     @Test
     public void testAdd() throws ParseException, TokenizerException, LillilRuntimeException {
-        Environment env = new CoreEnvironment(null);
-        env.bind("x", 42.0);
-        Evaluator eval = new Evaluator();
-        Object output = eval.eval("(+ x 1)", env);
+        Lillil lillil = new Lillil();
+        lillil.useCoreModule();
+        lillil.bindBase("x", 42.0);
+        Object output = lillil.eval("(+ x 1)");
         assertEquals(43.0, output);
     }
 
@@ -49,12 +49,12 @@ public class EvalTest {
      */
     @Test
     public void testLambda() throws ParseException, TokenizerException, LillilRuntimeException {
-        Environment env = new CoreEnvironment(null);
-        Evaluator eval = new Evaluator();
-        Object output = eval.eval("(lambda (x) (+ x 1))", env);
+        Lillil lillil = new Lillil();
+        lillil.useCoreModule();
+        Object output = lillil.eval("(lambda (x) (+ x 1))");
         assertTrue("Expected a Function", output instanceof Function);
-        env.bind("test", output);
-        output = eval.eval("(test 42)", env);
+        lillil.bindBase("test", output);
+        output = lillil.eval("(test 42)");
         assertEquals(43.0, output);
     }
 
@@ -64,10 +64,10 @@ public class EvalTest {
      */
     @Test
     public void testDefine() throws ParseException, TokenizerException, LillilRuntimeException {
-        Environment env = new CoreEnvironment(null);
-        Evaluator eval = new Evaluator();
-        Object output = eval.eval("(define x 42)", env);
+        Lillil lillil = new Lillil();
+        lillil.useCoreModule();
+        Object output = lillil.eval("(define x 42)");
         assertEquals(null, output);
-        assertEquals(42.0, env.lookup("x"));
+        assertEquals(42.0, lillil.lookupPersist("x"));
     }
 }

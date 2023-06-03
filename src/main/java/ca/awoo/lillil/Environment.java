@@ -11,6 +11,7 @@ import java.util.Map;
 public class Environment {
     private final Map<String, Object> bindings = new HashMap<>();
     private final Environment parent;
+    
 
     /**
      * Creates a new environment with no parent.
@@ -50,4 +51,6 @@ public class Environment {
         }
         return value;
     }
+
+    
 }
