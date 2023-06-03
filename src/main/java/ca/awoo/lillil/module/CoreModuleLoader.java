@@ -53,12 +53,34 @@ public class CoreModuleLoader extends NativeModuleLoader{
                 return quotient;
             }
         });
+        this.module.put("%", new Function() {
+            @Override
+            public Object apply(Object... args) {
+                double quotient = (double) args[0];
+                for (int i = 1; i < args.length; i++) {
+                    quotient %= (double) args[i];
+                }
+                return quotient;
+            }
+        });
         this.module.put("=", new Function() {
             @Override
             public Object apply(Object... args) {
                 Object first = args[0];
                 for (int i = 1; i < args.length; i++) {
                     if (!first.equals(args[i])) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+        this.module.put("!=", new Function() {
+            @Override
+            public Object apply(Object... args) {
+                Object first = args[0];
+                for (int i = 1; i < args.length; i++) {
+                    if (first.equals(args[i])) {
                         return false;
                     }
                 }
@@ -139,6 +161,16 @@ public class CoreModuleLoader extends NativeModuleLoader{
             @Override
             public Object apply(Object... args) {
                 return !(boolean) args[0];
+            }
+        });
+        this.module.put("xor", new Function() {
+            @Override
+            public Object apply(Object... args) {
+                boolean result = false;
+                for (Object arg : args) {
+                    result ^= (boolean) arg;
+                }
+                return result;
             }
         });
         this.module.put("list", new Function() {

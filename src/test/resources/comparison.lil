@@ -1,0 +1,55 @@
+(use-import "test")
+
+;Comparison tests
+
+;Equal
+(assert-true (= 1 1))
+(assert-false (= 1 2))
+
+;Not equal
+(assert-true (!= 1 2))
+(assert-false (!= 1 1))
+
+;Less than
+(assert-true (< 1 2))
+(assert-false (< 2 1))
+
+;Less than or equal
+(assert-true (<= 1 2))
+(assert-true (<= 1 1))
+(assert-false (<= 2 1))
+
+;Greater than
+(assert-true (> 2 1))
+(assert-false (> 1 2))
+
+;Greater than or equal
+(assert-true (>= 2 1))
+(assert-true (>= 2 2))
+(assert-false (>= 1 2))
+
+;And
+(assert-true (and #t #t))
+(assert-false (and #t #f))
+(assert-false (and #f #t))
+(assert-false (and #f #f))
+
+;Or
+(assert-true (or #t #t))
+(assert-true (or #t #f))
+(assert-true (or #f #t))
+(assert-false (or #f #f))
+
+;Not
+(assert-true (not #f))
+(assert-false (not #t))
+
+;Xor
+(assert-true (xor #t #f))
+(assert-true (xor #f #t))
+(assert-false (xor #t #t))
+(assert-false (xor #f #f))
+
+;If
+(assert-equals 1 (if #t 1 2))
+(assert-equals 2 (if #f 1 2))

@@ -145,35 +145,35 @@ public class Evaluator {
                         return map;
                     default:
                         //Function call or similar executable value
-                        Object executable = eval(first, env);
-                        //Check for macro
-                        if(executable instanceof Macro){
-                            Macro macro = (Macro) executable;
-                            return macro.apply(env, list.subList(1, list.size()).toArray());
-                        }
-                        List<Object> args = new ArrayList<>(list.size() - 1);
-                        for(int i = 0; i < list.size() - 1; i++){
-                            args.add(eval(list.get(i+1), env));
-                        }
-                        return evalExecutable(executable, args);
+                        return evalExecutable(list, env);
                 }
             } else {
                 //Function call or similar executable value
-                Object executable = eval(first, env);
-                //Check for macro
-                if(executable instanceof Macro){
-                    Macro macro = (Macro) executable;
-                    return macro.apply(env, list.subList(1, list.size()).toArray());
-                }
-                List<Object> args = new ArrayList<>(list.size() - 1);
-                for(int i = 0; i < list.size() - 1; i++){
-                    args.add(eval(list.get(i+1), env));
-                }
-                return evalExecutable(executable, args);
+                return evalExecutable(list, env);
             }
         } else {
             return expr;
         }
+    }
+
+    private Object evalExecutable(List<Object> list, Environment env) throws LillilRuntimeException {
+        Object first = list.get(0);
+        //Function call or similar executable value
+        Object executable = eval(first, env);
+        //Pre-emptivly check for undefined symbol and throw with some details
+        if(first instanceof Symbol && executable == null){
+            throw new LillilRuntimeException("Symbol " + ((Symbol) first).value + " is not defined");
+        }
+        //Check for macro
+        if(executable instanceof Macro){
+            Macro macro = (Macro) executable;
+            return macro.apply(env, list.subList(1, list.size()).toArray());
+        }
+        List<Object> args = new ArrayList<>(list.size() - 1);
+        for(int i = 0; i < list.size() - 1; i++){
+            args.add(eval(list.get(i+1), env));
+        }
+        return evalExecutable(executable, args);
     }
 
     private Object evalExecutable(Object exec, List<Object> args) throws LillilRuntimeException{

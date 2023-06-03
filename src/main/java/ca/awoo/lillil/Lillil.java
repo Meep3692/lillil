@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -193,16 +195,7 @@ public class Lillil {
         return evaluator.evalAll(code, env);
     }
 
-    private String readAllFile(File file) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        for(String line = br.readLine(); line != null; line = br.readLine()){
-            sb.append(line);
-            sb.append("\n");
-        }
-        br.close();
-        return sb.toString();
-    }
+    
 
     /**
      * Evaluate some code.
@@ -231,6 +224,36 @@ public class Lillil {
      */
     public List<Object> evalAllInCleanEnv(File file) throws ParseException, TokenizerException, LillilRuntimeException, IOException {
         String code = readAllFile(file);
+        return evalAllInCleanEnv(code);
+    }
+
+    /**
+     * Evaluate some code.
+     * @param is The input stream providing the code to evaluate.
+     * @return The result of the evaluation.
+     * @throws ParseException If an error occurs while parsing the code.
+     * @throws TokenizerException If an error occurs while tokenizing the code.
+     * @throws LillilRuntimeException If an error occurs while evaluating the code.
+     * @throws IOException If an error occurs while reading the stream.
+     */
+    public List<Object> evalAll(InputStream is) throws ParseException, TokenizerException, LillilRuntimeException, IOException {
+        String code = readAllStream(is);
+        return evalAll(code);
+    }
+
+    /**
+     * Evaluate some code in a clean environment.
+     * This means that the code will have access only to the base bindings and not the persistent bindings.
+     * This should be used for evaluating module code.
+     * @param is The input stream providing the code to evaluate.
+     * @return The result of the evaluation.
+     * @throws ParseException If an error occurs while parsing the code.
+     * @throws TokenizerException If an error occurs while tokenizing the code.
+     * @throws LillilRuntimeException If an error occurs while evaluating the code.
+     * @throws IOException If an error occurs while reading the stream.
+     */
+    public List<Object> evalAllInCleanEnv(InputStream is) throws ParseException, TokenizerException, LillilRuntimeException, IOException {
+        String code = readAllStream(is);
         return evalAllInCleanEnv(code);
     }
 
@@ -265,5 +288,27 @@ public class Lillil {
             }
         }
         return null;
+    }
+
+    private String readAllFile(File file) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        for(String line = br.readLine(); line != null; line = br.readLine()){
+            sb.append(line);
+            sb.append("\n");
+        }
+        br.close();
+        return sb.toString();
+    }
+
+    private String readAllStream(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        for(String line = br.readLine(); line != null; line = br.readLine()){
+            sb.append(line);
+            sb.append("\n");
+        }
+        br.close();
+        return sb.toString();
     }
 }
