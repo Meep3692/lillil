@@ -95,7 +95,7 @@ public class Tokenizer {
         new TokenFinder(Pattern.compile("^\"(?:\\\\.|[^\\\\\"])*\""), TokenType.STRING),
         new TokenFinder(Pattern.compile("^[+-]?\\d+(?:\\.\\d+)?"), TokenType.NUMBER),
         new TokenFinder(Pattern.compile("^(?:#t|#f)"), TokenType.BOOLEAN),
-        new TokenFinder(Pattern.compile("^[^\\s()\"\\d:{};'#][^\\s()\"':;#]*"), TokenType.SYMBOL),
+        new TokenFinder(Pattern.compile("^[^\\s()\"\\d:{};'#][^\\s(){}\"':;#]*"), TokenType.SYMBOL),
         new TokenFinder(Pattern.compile("^'"), TokenType.APOSTROPHE),
         new TokenFinder(Pattern.compile("^:"), TokenType.COLON),
         new TokenFinder(Pattern.compile("^;.*"), TokenType.COMMENT),
