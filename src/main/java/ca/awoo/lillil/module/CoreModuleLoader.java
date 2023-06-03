@@ -389,7 +389,11 @@ public class CoreModuleLoader extends NativeModuleLoader{
             public Object apply(Environment env, Object... args) throws LillilRuntimeException {
                 if(args[0] instanceof String){
                     try {
-                        return ((Macro)(module.get("use"))).apply(env, lillil.getModule((String) args[0]));
+                        Map<String, Object> module = lillil.getModule((String) args[0]);
+                        if(module == null) {
+                            throw new LillilRuntimeException("use-import: module " + args[0] + " not found");
+                        }
+                        return ((Macro)(module.get("use"))).apply(env, module);
                     } catch (ParseException | TokenizerException e) {
                         throw new LillilRuntimeException("use-import: failed to import module " + args[0], e);
                     }
