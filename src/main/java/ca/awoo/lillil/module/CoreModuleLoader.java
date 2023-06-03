@@ -368,16 +368,9 @@ public class CoreModuleLoader extends NativeModuleLoader{
                 Evaluator eval = new Evaluator();
                 Object arg = eval.eval(args[0], env);
                 if(arg instanceof Map) {
-                    Map<Object, Object> map = (Map<Object, Object>) arg;
-                    for (Map.Entry<Object, Object> entry : map.entrySet()) {
-                        if(entry.getKey() instanceof String) {
-                            env.bind((String)entry.getKey(), entry.getValue());
-                        } else {
-                            throw new LillilRuntimeException("use: get weird map with non-string keys");
-                        }
-                    }
+                    Map<String, Object> map = (Map<String, Object>) arg;
+                    use(map, env);
                     return null;
-                    
                 } else {
                     throw new LillilRuntimeException("use: first argument must be a map");
                 }
@@ -393,7 +386,8 @@ public class CoreModuleLoader extends NativeModuleLoader{
                         if(module == null) {
                             throw new LillilRuntimeException("use-import: module " + args[0] + " not found");
                         }
-                        return ((Macro)(module.get("use"))).apply(env, module);
+                        use(module, env);
+                        return null;
                     } catch (ParseException | TokenizerException e) {
                         throw new LillilRuntimeException("use-import: failed to import module " + args[0], e);
                     }
@@ -403,5 +397,11 @@ public class CoreModuleLoader extends NativeModuleLoader{
             }
 
         });
+    }
+
+    private void use(Map<String, Object> map, Environment env){
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            env.bind(entry.getKey(), entry.getValue());
+        }
     }
 }
