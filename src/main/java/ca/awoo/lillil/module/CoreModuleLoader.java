@@ -323,7 +323,6 @@ public class CoreModuleLoader extends NativeModuleLoader{
                 } else {
                     throw new LillilRuntimeException("map: second argument must be a list");
                 }
-                System.out.println(list);
                 return list;
             }
         });
